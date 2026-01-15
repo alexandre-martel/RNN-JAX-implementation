@@ -2,10 +2,11 @@ from src.model import init_params
 from src.train import update_step
 from src.utils import TextProcessor
 import jax.numpy as jnp
+import pickle
 from jax import random
 import os
 
-file_path = "data\essais_montaigne.txt"
+file_path = "data/essais_montaigne.txt" 
 with open(file_path, "r", encoding="utf-8") as f:
     text = f.read()
 
@@ -15,7 +16,7 @@ data = proc.encode(text)
 seq_length = 50  
 hidden_size = 256 
 learning_rate = 0.001
-epochs = 10000
+epochs = 5000
 
 key = random.PRNGKey(1)
 params = init_params(proc.vocab_size, hidden_size=hidden_size, key=key)
@@ -33,4 +34,8 @@ for epoch in range(epochs):
     p += seq_length
     
     if epoch % 500 == 0:
-        print(f"Étape {epoch} | Position dans le texte: {p} | Loss: {loss:.4f}")
+        print(f"Epoch {epoch} | Position in the text {p} | Loss: {loss:.4f}")
+
+with open("rnn_montaigne.pkl", "wb") as f:
+    pickle.dump({'params': params, 'proc': proc}, f)
+print("Modèle sauvegardé dans rnn_montaigne.pkl")

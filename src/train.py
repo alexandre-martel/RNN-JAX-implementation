@@ -1,7 +1,7 @@
 import jax.nn as nn
-from model import forward_pass
 import jax.numpy as jnp
 import jax
+from src.model import forward_pass
 
 def loss_fn(params, h_init, inputs, targets):
     logits = forward_pass(params, h_init, inputs)
