@@ -13,9 +13,7 @@ def loss_fn(params, h_init, inputs, targets):
 @jax.jit
 def update_step(params, h_init, inputs, targets, learning_rate):
     loss, grads = jax.value_and_grad(loss_fn)(params, h_init, inputs, targets)
-    
-    # Descente de gradient simple (SGD)
-    # En JAX pur, on met à jour le dictionnaire manuellement
+
     new_params = jax.tree_util.tree_map(
         lambda p, g: p - learning_rate * g, params, grads
     )
