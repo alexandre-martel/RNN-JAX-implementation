@@ -1,4 +1,4 @@
-import jnp
+import jax.numpy as jnp
 
 class TextProcessor:
     def __init__(self, text):

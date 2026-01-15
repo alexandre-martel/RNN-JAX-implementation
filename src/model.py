@@ -13,3 +13,26 @@ def init_params(vocab_size, hidden_size, key):
         'bh': jnp.zeros((hidden_size, 1)),
         'by': jnp.zeros((vocab_size, 1))
     }
+
+def rnn_step(params, h_prev, x_indexed):
+    x_t = jax.nn.one_hot(x_indexed, params['Wxh'].shape[1]).reshape(-1, 1)
+
+    #We chose the tanh activation function for the hidden state and a linear activation for the output
+    # RNN formula 1:
+    # h_t = tanh(W_xh * x_t + W_hh * h_{t-1} + b_h) 
+    h_next = jnp.tanh(jnp.dot(params['Wxh'], x_t) + jnp.dot(params['Whh'], h_prev) + params['bh'])
+    
+    # RNN formula 2:
+    # y_t = W_hy * h_t + b_y
+    y_t = jnp.dot(params['Why'], h_next) + params['by']
+
+    return h_next, y_t.flatten()
+
+def forward_pass(params, h_init, input_indices):
+    # On utilise jax.lax.scan pour boucler efficacement sur la séquence
+    def scan_fn(h, x):
+        h_next, y_t = rnn_step(params, h, x)
+        return h_next, y_t
+    
+    h_final, logits_sequence = jax.lax.scan(scan_fn, h_init, input_indices)
+    return logits_sequence
