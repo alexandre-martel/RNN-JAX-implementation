@@ -2,6 +2,7 @@ from src.model import init_params
 from src.train import update_step
 from src.utils import TextProcessor
 import jax.numpy as jnp
+import matplotlib.pyplot as plt
 import pickle
 from jax import random
 import os
@@ -16,13 +17,14 @@ data = proc.encode(text)
 seq_length = 50  
 hidden_size = 256 
 learning_rate = 0.001
-epochs = 5000
+epochs = 50000
 
 key = random.PRNGKey(1)
 params = init_params(proc.vocab_size, hidden_size=hidden_size, key=key)
 h_init = jnp.zeros((hidden_size, 1))
 
 p = 0 
+loss_history = []
 for epoch in range(epochs):
     if p + seq_length + 1 >= len(data):
         p = 0
@@ -32,9 +34,16 @@ for epoch in range(epochs):
     
     params, loss = update_step(params, h_init, inputs, targets, learning_rate)
     p += seq_length
-    
+    loss_history.append(loss)
     if epoch % 500 == 0:
         print(f"Epoch {epoch} | Position in the text {p} | Loss: {loss:.4f}")
+
+plt.figure(figsize=(10, 4))
+plt.plot(loss_history)
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.title("Training Loss over Time")
+plt.show()
 
 with open("rnn_montaigne.pkl", "wb") as f:
     pickle.dump({'params': params, 'proc': proc}, f)
