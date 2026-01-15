@@ -29,7 +29,7 @@ def rnn_step(params, h_prev, x_indexed):
     return h_next, y_t.flatten()
 
 def forward_pass(params, h_init, input_indices):
-    # On utilise jax.lax.scan pour boucler efficacement sur la séquence
+    # jax.lax.scan 
     def scan_fn(h, x):
         h_next, y_t = rnn_step(params, h, x)
         return h_next, y_t
