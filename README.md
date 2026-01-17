@@ -1,5 +1,7 @@
 # RNN-JAX from scratch
 
+![Logo JAX](https://raw.githubusercontent.com/google/jax/main/images/jax_logo_250px.png)
+
 Implementation of a discrete RNN for text generation, designed just with JAX.
 
 The model is trained on Montaigne's *Essays* to capture the structures of Old French, in order to try to do carachter prediction.
